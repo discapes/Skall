@@ -67,6 +67,7 @@ GLTexture Loader::LoadTexture(string_view name)
     LOG("Loading texture %s", name.data());
     int width, height, nChannels;
 
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(name.data(), &width, &height, &nChannels, 0);
     if (!data)
         FAIL("Couldn't read image: %s", stbi_failure_reason());
@@ -75,8 +76,8 @@ GLTexture Loader::LoadTexture(string_view name)
     texture.Parameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     texture.Parameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     constexpr GLsizei num_mipmaps = 4; // TODO
-    texture.Storage2D(num_mipmaps, GL_RGBA8, width, height);
-    texture.SubImage2D(0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+    texture.Storage2D(num_mipmaps, nChannels == 4 ? GL_RGBA8 : GL_RGB8, width, height);
+    texture.SubImage2D(0, 0, 0, width, height, nChannels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
     texture.GenerateMipmap();
 
     stbi_image_free(data);

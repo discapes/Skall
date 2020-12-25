@@ -56,7 +56,7 @@ void run()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
-	GLTexture texture = Loader::LoadTexture("texture.jpg");
+	GLTexture texture = Loader::LoadTexture("block.jpg");
 	Mesh cube("Cube", Cube::indices, Cube::vertices);
 
 	Camera cam;
@@ -65,7 +65,6 @@ void run()
 	LOG("Initialization complete");
 	while (!glfwWindowShouldClose(window)) {
 		Window::NewFrame();
-		std::cout << Window::CursorPos().x << "\t\t" << Window::CursorPos().y << std::endl;
 		{
 			glfwPollEvents();
 			if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

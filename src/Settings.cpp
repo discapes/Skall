@@ -8,7 +8,7 @@ namespace Settings
 	int Height() { return height; }
 	float foV = 90;
 	float FoV() { return foV; }
-    bool fullscreen = true;
+    bool fullscreen = false;
     bool Fullscreen() { return fullscreen; }
 
 	void SetResolution(int width2, int height2)
