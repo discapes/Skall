@@ -4,14 +4,13 @@
 #include <vector>
 
 struct Mesh {
-    std::string name;
-    GLTexture texture;
-    GLBuffer VBO;
+	std::string name;
+	GLTexture texture;
+	GLBuffer VBO;
+	GLuint lengthIndices;
 
-public:
-    Mesh(const std::vector<GLuint> indices, const std::vector<Vertex> vertices);
-    void Draw();
-    const std::string& Name() {
-        return name;
-    }
+    public:
+	Mesh(std::string name, const std::vector<GLuint>& indices, const std::vector<Vertex>& vertices);
+	void Draw();
+	const std::string& Name() { return name; }
 };

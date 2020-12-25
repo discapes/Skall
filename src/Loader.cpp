@@ -11,15 +11,15 @@ using namespace std;
 static GLShader compileShader(const char *source, GLenum shaderType)
 {
     GLShader shader(shaderType);
-    shader.copySource(1, &source, NULL);
-    shader.compile();
+    shader.CopySource(1, &source, NULL);
+    shader.Compile();
 
     int success;
-    shader.getiv(GL_COMPILE_STATUS, &success);
+    shader.Getiv(GL_COMPILE_STATUS, &success);
     if (!success)
     {
         char infoLog[512];
-        shader.getInfoLog(512, NULL, infoLog);
+        shader.GetInfoLog(512, NULL, infoLog);
         LOG("Failed to compile shader: %s", infoLog);
     }
     return shader;
@@ -44,19 +44,19 @@ GLProgram Loader::BuildProgram(string_view vertexShaderName, string_view fragmen
     LOG("Compiling fragment shader %s", fragmentShaderName.data());
     GLShader fragmentShader = compileShader(fsSource.c_str(), GL_FRAGMENT_SHADER);
     GLProgram program;
-    program.attachShader(vertexShader);
-    program.attachShader(fragmentShader);
+    program.AttachShader(vertexShader);
+    program.AttachShader(fragmentShader);
     LOG("Linking program");
-    program.link();
-    program.detachShader(vertexShader);
-    program.detachShader(fragmentShader);
+    program.Link();
+    program.DetachShader(vertexShader);
+    program.DetachShader(fragmentShader);
 
     int success;
-    program.getiv(GL_LINK_STATUS, &success);
+    program.Getiv(GL_LINK_STATUS, &success);
     if (!success)
     {
         char infoLog[512];
-        program.getInfoLog(512, NULL, infoLog);
+        program.GetInfoLog(512, NULL, infoLog);
         FAIL("Failed to link program: %s", infoLog);
     }
     return program;
@@ -71,14 +71,13 @@ GLTexture Loader::LoadTexture(string_view name)
     if (!data)
         FAIL("Couldn't read image: %s", stbi_failure_reason());
 
-    glActiveTexture(GL_TEXTURE0);
     GLTexture texture;
-    texture.parameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    texture.parameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    texture.Parameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    texture.Parameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     constexpr GLsizei num_mipmaps = 4; // TODO
-    texture.storage2D(num_mipmaps, GL_RGBA8, width, height);
-    texture.subImage2D(0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-    texture.generateMipmap();
+    texture.Storage2D(num_mipmaps, GL_RGBA8, width, height);
+    texture.SubImage2D(0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+    texture.GenerateMipmap();
 
     stbi_image_free(data);
     return texture;
