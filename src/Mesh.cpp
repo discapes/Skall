@@ -31,5 +31,5 @@ void Mesh::Draw()
 	VAO.BindElementBuffer(VBO);
 	VAO.BindVertexBuffer(0, VBO, this->lengthIndices, sizeof(Vertex));
 	VAO.bind();
-	glDrawElements(GL_TRIANGLES, lengthIndices / sizeof(Vertex), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, lengthIndices / sizeof(GLuint), GL_UNSIGNED_INT, 0);
 }

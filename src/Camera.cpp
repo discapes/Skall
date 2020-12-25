@@ -6,8 +6,10 @@ using namespace glm;
 
 void Cameraman::ProcessMouse()
 {
-    dvec2 cpos = Window::CursorPos();
-	Window::CenterCursor();
+	static dvec2 prevcursorpos = { 0, 0 };
+	dvec2 cursorpos = Window::CursorPos();
+    dvec2 cpos = cursorpos - prevcursorpos;
+	prevcursorpos = cursorpos;
 	camera.longtitude += lookSpeed * 0.005 * cpos.x;
 	camera.latitude += lookSpeed * 0.005 * cpos.y;
 	camera.latitude = clamp(camera.latitude, -1., 1.);
@@ -72,7 +74,5 @@ void Cameraman::ProcessKb()
 	}
 	normalize(moveDelta);
 	camera.pos += moveDelta;
-
-	std::cout << camera.longtitude << " " << camera.latitude << " " << " " << std::endl;
 }
 

@@ -19,7 +19,6 @@ using namespace glm;
 
 void run()
 {
-	
 	assert(glfwInit());
 	LOG("Initialized GLFW");
 #ifdef DBGOUT
@@ -29,8 +28,14 @@ void run()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	GLFWwindow* window;
-	window = glfwCreateWindow(800, 600, "DEMO", NULL, NULL);
+
+	if (Settings::Fullscreen()) {
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		Settings::SetResolution(mode->width, mode->height);
+	}
+	GLFWwindow* window = glfwCreateWindow(Settings::Width(), Settings::Height(), "Skall", Settings::Fullscreen() ? glfwGetPrimaryMonitor() : NULL, NULL);
+
 	assert(window);
 	LOG("Created window");
 	glfwMakeContextCurrent(window);
@@ -38,15 +43,16 @@ void run()
 	LOG("Loaded OpenGL extensions");
 	Window::SetWin(window);
 
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetFramebufferSizeCallback(window,
-				       [](GLFWwindow*, int width, int height) { glViewport(0, 0, width, height); });
+	Window::CenterCursor();
+
 #ifdef DBGOUT
 	enableDebug();
 #endif
-	//glEnable(GL_BLEND);
-//	glEnable(GL_CULL_FACE);
-	//glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
@@ -59,21 +65,22 @@ void run()
 	LOG("Initialization complete");
 	while (!glfwWindowShouldClose(window)) {
 		Window::NewFrame();
+		std::cout << Window::CursorPos().x << "\t\t" << Window::CursorPos().y << std::endl;
 		{
 			glfwPollEvents();
 			if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 				glfwSetWindowShouldClose(window, true);
-            player.ProcessInput();
+			player.ProcessInput();
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mat4 M(1.f);
-        mat4 V = cam.ViewMatrix();
-        mat4 P = cam.ProjMatrix();
-        mat4 MVP = M * V * P;
+		mat4 M = glm::translate(mat4(1.f), { 0, 0, -2 });
+		mat4 V = cam.ViewMatrix();
+		mat4 P = cam.ProjMatrix();
+		mat4 MVP = P * V * M;
 		program.Use();
-        GLint uniMVP = program.GetUniformLocation("MVP");
-        glUniformMatrix4fv(uniMVP, 1, false, glm::value_ptr(MVP));
+		GLint uniMVP = program.GetUniformLocation("MVP");
+		glUniformMatrix4fv(uniMVP, 1, false, glm::value_ptr(MVP));
 		texture.Bind(0);
 		cube.Draw();
 
