@@ -29,13 +29,13 @@ AlwaysBreakTemplateDeclarations: false
 BinPackArguments: true
 BinPackParameters: true
 BraceWrapping:
-  AfterClass: false
+  AfterClass: true
   AfterControlStatement: false
   AfterEnum: false
   AfterFunction: true
   AfterNamespace: true
   AfterObjCDeclaration: false
-  AfterStruct: false
+  AfterStruct: true
   AfterUnion: false
   AfterExternBlock: false # Unknown to clang-format-5.0
   BeforeCatch: false

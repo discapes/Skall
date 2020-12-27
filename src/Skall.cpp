@@ -14,6 +14,7 @@
 #include "Cube.hpp"
 #include "Window.hpp"
 #include "Camera.hpp"
+#include "Uniforms.hpp"
 using namespace std;
 using namespace glm;
 
@@ -24,6 +25,7 @@ void run()
 #ifdef DBGOUT
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 #endif
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -53,14 +55,16 @@ void run()
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
 	GLTexture texture = Loader::LoadTexture("block.jpg");
 	Mesh cube("Cube", Cube::indices, Cube::vertices);
 
-	Camera cam;
-	Cameraman player(cam);
+	Camera camera;
+	Cameraman player(camera);
+	Uniforms::LockAndLoad(program, camera, std::vector<Light>());
 
 	LOG("Initialization complete");
 	while (!glfwWindowShouldClose(window)) {
@@ -74,8 +78,8 @@ void run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		mat4 M = glm::translate(mat4(1.f), { 0, 0, -2 });
-		mat4 V = cam.ViewMatrix();
-		mat4 P = cam.ProjMatrix();
+		mat4 V = camera.ViewMatrix();
+		mat4 P = camera.ProjMatrix();
 		mat4 MVP = P * V * M;
 		program.Use();
 		GLint uniMVP = program.GetUniformLocation("MVP");
@@ -95,6 +99,5 @@ int main()
 	cin.tie(nullptr);
 	cout << endl;
 	run();
-	cout << endl;
 	return 0;
 }
