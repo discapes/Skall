@@ -7,9 +7,9 @@ Mesh::Mesh(std::string name, const std::vector<GLuint>& indices, const std::vect
 	this->name = std::move(name);
 	this->lengthIndices = indices.size() * sizeof(GLuint);
 	GLsizei lengthVertices = vertices.size() * sizeof(Vertex);
-	VBO.storage(lengthIndices + lengthVertices, nullptr, GL_DYNAMIC_STORAGE_BIT);
-	VBO.subData(0, lengthIndices, indices.data());
-	VBO.subData(lengthIndices, lengthVertices, vertices.data());
+	VBO.Storage(lengthIndices + lengthVertices, nullptr, GL_DYNAMIC_STORAGE_BIT);
+	VBO.SubData(0, lengthIndices, indices.data());
+	VBO.SubData(lengthIndices, lengthVertices, vertices.data());
 }
 
 void Mesh::Draw()
@@ -30,6 +30,6 @@ void Mesh::Draw()
 	}
 	VAO.BindElementBuffer(VBO);
 	VAO.BindVertexBuffer(0, VBO, this->lengthIndices, sizeof(Vertex));
-	VAO.bind();
+	VAO.Bind();
 	glDrawElements(GL_TRIANGLES, lengthIndices / sizeof(GLuint), GL_UNSIGNED_INT, 0);
 }

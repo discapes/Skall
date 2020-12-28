@@ -1,5 +1,6 @@
 #pragma once
 #define DBGOUT
+#define PRINTFPS
 #include <stdio.h>
 #include <chrono>
 #include <thread>

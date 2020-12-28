@@ -1,6 +1,8 @@
 #include <GLFW/glfw3.h>
+#include <iostream>
 #include "Window.hpp"
 #include "Settings.hpp"
+#include "Defines.h"
 
 namespace Window
 {
@@ -25,17 +27,34 @@ namespace Window
 		pos.y = -pos.y + Settings::Height() / 2;
 		return pos;
 	}
-	void SetCursorPos(glm::dvec2 pos) { glfwSetCursorPos(win, pos.x + Settings::Width() / 2, -pos.y + Settings::Height() / 2); }
+	void SetCursorPos(glm::dvec2 pos)
+	{
+		glfwSetCursorPos(win, pos.x + Settings::Width() / 2, -pos.y + Settings::Height() / 2);
+	}
 	void CenterCursor() { SetCursorPos({ 0, 0 }); }
 
 	double lastFrameDuration = 0;
+	double fps = 0;
 	double LastFrameDuration() { return lastFrameDuration; }
+	double FPS() { return fps; }
 	void NewFrame()
 	{
-		static double lastFrameBegin = glfwGetTime();
-		double lastFrameEnd = glfwGetTime();
-		lastFrameDuration = lastFrameEnd - lastFrameBegin;
+		static double lastTime = glfwGetTime();
+		static double lastFPSCount = glfwGetTime();
+		static int nFrames = 0;
+		double time = glfwGetTime();
 
-		lastFrameBegin = lastFrameEnd;
+		lastFrameDuration = time - lastTime;
+		if (time - lastFPSCount >= 1.0) {
+			fps = nFrames;
+			nFrames = 0;
+			lastFPSCount = time;
+#ifdef PRINTFPS
+			std::cout << fps << std::endl;
+#endif
+		}
+
+		nFrames++;
+		lastTime = time;
 	}
 }

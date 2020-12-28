@@ -34,7 +34,7 @@ class Camera {
 	double longtitude{ 0 };
 
 	mat4 viewMatrix{ glm::lookAt(pos, pos + vec3(0, 0, -1), vec3(0, 1, 0)) };
-	mat4 projMatrix{ glm::perspective(Settings::FoV(), (float)Settings::Width() / Settings::Height(), 0.1f, 100.0f) };
+	mat4 projMatrix{ glm::perspective(Settings::FOV(), (float)Settings::Width() / Settings::Height(), 0.1f, 100.0f) };
     
     public:
     mat4 ViewMatrix() { return viewMatrix; }

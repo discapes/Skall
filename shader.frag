@@ -1,4 +1,5 @@
 #version 430 core
+#extension GL_ARB_bindless_texture : enable
 layout(bindless_sampler) uniform;
 layout(bindless_image) uniform;
 
@@ -24,9 +25,9 @@ struct Spotlight {
 };
 
 layout (std430, binding = 0) buffer lights {
-    int nPoint;
-    int nDirectional;
-    int nSpot;
+    int nPointFloats; 
+    int nDirectionalFloats;
+    int nSpotFloats;
     float data[];
 };
 
@@ -34,5 +35,5 @@ uniform sampler2D tex_diffuse;
 
 void main()
 {
-    color = texture(tex, vs.uv);
+    color = texture(tex_diffuse, vs.uv);
 } 

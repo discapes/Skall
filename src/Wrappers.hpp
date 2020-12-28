@@ -29,6 +29,7 @@ class GLTexture
 		return glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
 	}
 	void Parameteri(GLenum pname, GLint param) { return glTextureParameteri(texture, pname, param); }
+	GLuint64 GetTextureHandleARB() { return glGetTextureHandleARB(texture); }
 };
 
 class GLVertexArray;
@@ -48,6 +49,15 @@ class GLBuffer
 		}
 	}
 	GLBuffer(GLBuffer&& other) noexcept : buffer(other.buffer) { other.buffer = 0; }
+	GLBuffer& operator=(GLBuffer&& other) noexcept {
+		if (buffer != 0) {
+			glDeleteBuffers(1, &buffer);
+			LOG("Deleted buffer %d", buffer);
+		}
+		buffer = other.buffer;
+		other.buffer = 0;
+		return *this;
+	}
 
 	void Storage(GLsizeiptr size, const void* data, GLbitfield flags)
 	{
@@ -57,7 +67,23 @@ class GLBuffer
 	{
 		return glNamedBufferSubData(buffer, offset, size, data);
 	}
-	void BindBase(GLenum target, GLuint index) { return glBindBufferBase(target, index, buffer); }
+	void BindBase(GLenum target, GLuint index) const { return glBindBufferBase(target, index, buffer); }
+	void BindRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size) const
+	{
+		return glBindBufferRange(target, index, buffer, offset, size);
+	}
+	void Data(GLsizeiptr size, const void* data, GLenum usage)
+	{
+		return glNamedBufferData(buffer, size, data, usage);
+	}
+	void* MapRange(GLintptr offset, GLsizeiptr length, GLbitfield access)
+	{
+		return glMapNamedBufferRange(buffer, offset, length, access);
+	}
+	void CopyData(const GLBuffer& readBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
+	{
+		return glCopyNamedBufferSubData(readBuffer.buffer, buffer, readOffset, writeOffset, size);
+	}
 };
 
 class GLVertexArray
@@ -160,9 +186,13 @@ class GLProgram
 	{
 		return glGetActiveUniform(program, index, bufSize, length, size, type, name);
 	}
-	GLint GetResourceLocation(GLenum programInterface​, const char* name​)
+	GLint GetResourceIndex(GLenum programInterface, const char* name)
 	{
-		return glGetProgramResourceLocation(program, programInterface​, name);
+		return glGetProgramResourceIndex(program, programInterface, name);
+	}
+	GLint GetResourceLocation(GLenum programInterface, const char* name)
+	{
+		return glGetProgramResourceLocation(program, programInterface, name);
 	}
 	void UniformHandleui64ARB(GLint location​, GLuint64 value​)
 	{

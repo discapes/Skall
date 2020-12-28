@@ -10,5 +10,6 @@ namespace Window
     void CenterCursor();
 
     double LastFrameDuration();
+    double FPS();
     void NewFrame();
 }
