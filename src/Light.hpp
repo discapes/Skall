@@ -4,30 +4,39 @@
 #include <array>
 using namespace glm;
 
-struct PointLight {
-    vec3 pos;
-    static constexpr int nFloats = 3;
-    std::array<float, nFloats> getData() {
-        return { pos.x, pos.y, pos.z }; 
-    }
-};
+struct Light {
+	int type; // 0 = off, 1 = directional, 2 = point, 3 = spot
+	vec3 color; // 123
+    vec3 dir; // 13
+    vec3 pos; // 23
+	float linear; // 23
+	float quadratic; //23
+	float innerCutoff; // 3
+	float outerCutoff; // 3
 
-struct DirectionalLight {
-    vec3 dir;
-    static constexpr int nFloats = 3;
-    std::array<float, nFloats> getData() {
-        return { dir.x, dir.y, dir.z }; 
-    }
+	Light()
+		: type(0)
+	{}
+	Light(vec3 color, vec3 dir)
+		: type(1)
+		, color(color)
+		, dir(dir)
+	{}
+	Light(vec3 color, vec3 pos, float range)
+		: type(2)
+		, color(color)
+		, pos(pos)
+		, linear(4.5 / range)
+		, quadratic(75.0 / range * range)
+	{}
+	Light(vec3 color, vec3 dir, vec3 pos, float range, float innerCutoff, float outerCutoff)
+		: type(3)
+		, color(color)
+		, dir(dir)
+		, pos(pos)
+		, linear(4.5 / range)
+		, quadratic(75.0 / range * range)
+		, innerCutoff(cos(radians(innerCutoff)))
+		, outerCutoff(cos(radians(outerCutoff)))
+	{}
 };
-
-struct SpotLight {
-    vec3 dir;
-    vec3 pos;
-    float cutoff;
-    static constexpr int nFloats = 7;
-    std::array<float, nFloats> getData() {
-        return { dir.x, dir.y, dir.z, pos.x, pos.y, pos.z, cutoff };
-    }
-};
-
-using Light = std::variant<PointLight, DirectionalLight, SpotLight>;

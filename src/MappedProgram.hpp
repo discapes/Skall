@@ -14,8 +14,8 @@ struct MappedProgram
 		map[TEX_DIFFUSE] = program.GetResourceLocation(GL_UNIFORM, "tex_diffuse");
 		map[TEX_SPECULAR] = program.GetResourceLocation(GL_UNIFORM, "tex_specular");
 		map[TEX_NORMAL] = program.GetResourceLocation(GL_UNIFORM, "tex_normal");
-		map[MATRICES] = program.GetResourceIndex(GL_UNIFORM_BLOCK, "matrices");
-		map[LIGHTS] = program.GetResourceIndex(GL_SHADER_STORAGE_BLOCK, "lights");
+		map[MATRICES] = program.GetResourceIndex(GL_UNIFORM_BLOCK, "Matrices");
+		map[LIGHTS] = program.GetResourceIndex(GL_SHADER_STORAGE_BLOCK, "Lights");
 	}
 
 	void SetDiffuseTex(GLuint64 tex_diffuse)
