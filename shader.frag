@@ -70,7 +70,7 @@ vec4 calcColor(Light light) {
 
 void main()
 {
-    color = vec4(0);
+    color = vec4(0, 0, 0, 1);
     for (int i = 0; i < nLights; i++)
         color += calcColor(lights[i]);
 } 

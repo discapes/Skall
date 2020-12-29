@@ -9,10 +9,8 @@ out VStoFS {
     vec2 uv;
 } fs;
 
-layout (std140, binding = 0) uniform Matrices {
-    mat4 MVP;
-    mat4 MV;
-};
+uniform mat4 MV;
+uniform mat4 MVP;
 
 void main()
 {

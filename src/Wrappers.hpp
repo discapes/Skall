@@ -49,7 +49,8 @@ class GLBuffer
 		}
 	}
 	GLBuffer(GLBuffer&& other) noexcept : buffer(other.buffer) { other.buffer = 0; }
-	GLBuffer& operator=(GLBuffer&& other) noexcept {
+	GLBuffer& operator=(GLBuffer&& other) noexcept
+	{
 		if (buffer != 0) {
 			glDeleteBuffers(1, &buffer);
 			LOG("Deleted buffer %d", buffer);
@@ -197,5 +198,9 @@ class GLProgram
 	void UniformHandleui64ARB(GLint location​, GLuint64 value​)
 	{
 		return glProgramUniformHandleui64ARB(program, location​, value​);
+	}
+	void UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
+	{
+		return glProgramUniformMatrix4fv(program, location, count, transpose, value);
 	}
 };

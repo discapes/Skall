@@ -14,8 +14,9 @@
 #include "Cube.hpp"
 #include "Window.hpp"
 #include "Camera.hpp"
-#include "MappedProgram.hpp"
-#include "ShaderResourceManager.hpp"
+#include "InterfaceMap.hpp"
+#include "Lighting.hpp"
+#include "MaterialUBO.hpp"
 using namespace std;
 using namespace glm;
 
@@ -62,12 +63,11 @@ void run()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	Mesh cube("Cube", Cube::indices, Cube::vertices);
-	MappedProgram mp(Loader::BuildProgram("shader.vert", "shader.frag"));
-	GLTexture blockTexture = Loader::LoadTexture("block.jpg");
-	GLuint64 texHandle = blockTexture.GetTextureHandleARB();
-	glMakeTextureHandleResidentARB(texHandle);
-	mp.SetDiffuseTex(texHandle);
-	ShaderResourceManager srm;
+	GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
+	InterfaceMap im(program);
+	GLTexture grassTexture = Loader::LoadTexture("block.jpg");
+	MaterialUBO grassUBO(32, grassTexture.GetTextureHandleARB(), grassTexture.GetTextureHandleARB()); 
+	Lighting lighting;
 	Camera camera;
 	Cameraman player(camera);
 
@@ -81,12 +81,13 @@ void run()
 			player.ProcessInput();
 			mat4 MV = camera.ViewMatrix() * glm::translate(mat4(1.f), { 0, 0, -2 });
 			mat4 MVP = camera.ProjMatrix() * MV;
-			srm.updateMVMatrix(MV);
-			srm.updateMVPMatrix(MVP);
+			im.SetMV(MV);
+			im.SetMVP(MVP);
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		mp.BindData(srm);
-		mp.program.Use();
+		lighting.Bind();
+		grassUBO.Bind();
+		program.Use();
 		cube.Draw();
 
 		glfwSwapBuffers(window);
