@@ -16,62 +16,47 @@
 #include "Camera.hpp"
 #include "InterfaceMap.hpp"
 #include "Lighting.hpp"
-#include "MaterialUBO.hpp"
+#include "Material.hpp"
 using namespace std;
 using namespace glm;
 
+GLFWwindow* createWindow();
+void configureGL();
+
+// todo flashlight, world ambient
+
 void run()
 {
-	assert(glfwInit());
-	LOG("Initialized GLFW");
-#ifdef DBGOUT
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-#endif
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-	if (Settings::Fullscreen()) {
-		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-		Settings::SetResolution(mode->width, mode->height);
+	{
+		LOG("Initializing GLFW");
+		assert(glfwInit());
+		LOG("Creating window");
+		GLFWwindow* window = createWindow();
+		Window::SetWindow(window);
+		LOG("Loading OpenGL functions");
+		assert(gladLoadGL());
+		if (!GLAD_GL_ARB_bindless_texture)
+			FAIL("GPU unsupported (GL_ARB_bindless_texture)");
 	}
-	GLFWwindow* window = glfwCreateWindow(Settings::Width(), Settings::Height(), "Skall", Settings::Fullscreen() ? glfwGetPrimaryMonitor() : NULL, NULL);
+	{
+		Mesh cube("Cube", Cube::indices, Cube::vertices);
+		Lighting lighting;
+		Camera camera;
+		GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
+		Cameraman player(camera);
+		InterfaceMap im(program);
 
-	assert(window);
-	LOG("Created window");
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(0);
-	assert(gladLoadGL());
-	assert(GLAD_GL_ARB_bindless_texture);
-	LOG("Loaded OpenGL extensions");
-	Window::SetWin(window);
-
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	Window::CenterCursor();
-
-#ifdef DBGOUT
-	enableDebug();
-#endif
-	glEnable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-	Mesh cube("Cube", Cube::indices, Cube::vertices);
-	GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
-	InterfaceMap im(program);
-	GLTexture grassTexture = Loader::LoadTexture("block.jpg");
-	MaterialUBO grassUBO(32, grassTexture.GetTextureHandleARB(), grassTexture.GetTextureHandleARB()); 
-	Lighting lighting;
-	Camera camera;
-	Cameraman player(camera);
+		GLTexture grass_diffuse = Loader::LoadTexture("grass_diffuse.png");
+		GLTexture grass_specular = Loader::LoadTexture("grass_specular.png");
+		GLuint64 grass_diffuse_handle = grass_diffuse.GetTextureHandleARB();
+		GLuint64 grass_specular_handle = grass_specular.GetTextureHandleARB();
+		glMakeTextureHandleResidentARB(grass_diffuse_handle);
+		glMakeTextureHandleResidentARB(grass_specular_handle);
+		Material grassBlock(32, grass_diffuse_handle, grass_specular_handle);
+	}
 
 	LOG("Initialization complete");
+	Window::CenterCursor();
 	while (!glfwWindowShouldClose(window)) {
 		Window::NewFrame();
 		{
@@ -86,13 +71,50 @@ void run()
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		lighting.Bind();
-		grassUBO.Bind();
+		grassBlock.Bind();
 		program.Use();
 		cube.Draw();
 
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
+}
+
+void configureGL()
+{
+	glfwSwapInterval(0);
+	glfwSetInputMode(Window::Window(), GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(Window::Window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	if (DBGOUT)
+		enableDebug();
+	glEnable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+}
+
+GLFWwindow* createWindow()
+{
+	if (DBGOUT)
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+	if (Settings::Fullscreen()) {
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		Settings::SetResolution(mode->width, mode->height);
+	}
+	LOG("Creating window")
+	GLFWwindow* window = glfwCreateWindow(Settings::Width(), Settings::Height(), "Skall",
+					      Settings::Fullscreen() ? glfwGetPrimaryMonitor() : NULL, NULL);
+	assert(window);
+	glfwMakeContextCurrent(window);
+	return window;
 }
 
 int main()

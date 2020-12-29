@@ -28,6 +28,6 @@ struct InterfaceMap
 	void SetMVP(glm::mat4 mat)
 	{
 		if (map[MVP] != -1)
-			program.UniformMatrix4fv(map[MV], 1, false, glm::value_ptr(mat));
+			program.UniformMatrix4fv(map[MVP], 1, false, glm::value_ptr(mat));
 	}
 };

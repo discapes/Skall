@@ -5,8 +5,8 @@ NAME = Skall.exe
 
 CXXFLAGS = -std=c++20 -g -Wall -Wextra #-Wfatal-errors
 LDLIBS = -lglad -lopengl32 -lglfw3 -lgdi32
-LDFLAGS = -Ldeps
-INCLUDE = -Ideps/include
+LDFLAGS = -Ldep
+INCLUDE = -Idep/include
 
 
 

@@ -32,7 +32,7 @@ layout (std430, binding = 0) buffer Lights {
     Light lights[];
 };
 
-layout (std140, binding = 0) uniform Material {
+layout (std140, binding = 0) uniform Material  {
     float shine;
     sampler2D diffuse;
     sampler2D specular;
@@ -73,4 +73,5 @@ void main()
     color = vec4(0, 0, 0, 1);
     for (int i = 0; i < nLights; i++)
         color += calcColor(lights[i]);
+    color = texture(mat.diffuse, frag.uv);
 } 

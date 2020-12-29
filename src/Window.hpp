@@ -3,7 +3,8 @@
 
 namespace Window
 {
-    void SetWin(GLFWwindow* newWin);
+    void SetWindow(GLFWwindow* newWindow);
+    GLFWwindow* Window();
     bool KeyDown(int key);
     glm::dvec2 CursorPos();
     void SetCursorPos(glm::dvec2 pos);

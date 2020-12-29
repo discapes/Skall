@@ -28,8 +28,10 @@ static GLShader compileShader(const char *source, GLenum shaderType)
 GLProgram Loader::BuildProgram(string_view vertexShaderName, string_view fragmentShaderName)
 {
     string vsSource, fsSource;
-    ifstream vsStream(vertexShaderName.data());
-    ifstream fsStream(fragmentShaderName.data());
+    string vsPath = string("rss/shaders/").append(vertexShaderName);
+    string fsPath = string("rss/shaders/").append(fragmentShaderName);
+    ifstream vsStream(vsPath);
+    ifstream fsStream(fsPath);
     bool vsFound = vsStream.good();
     bool fsFound = fsStream.good();
     LOG("Vertex shader %s %s, fragment shader %s %s",
@@ -68,7 +70,7 @@ GLTexture Loader::LoadTexture(string_view name)
     int width, height, nChannels;
 
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load(name.data(), &width, &height, &nChannels, 0);
+    unsigned char *data = stbi_load(string("rss/textures/").append(name).data(), &width, &height, &nChannels, 0);
     if (!data)
         FAIL("Couldn't read image: %s", stbi_failure_reason());
 

@@ -6,30 +6,34 @@
 
 namespace Window
 {
-	GLFWwindow* win;
+	GLFWwindow* window;
 
 	void window_size_callback(GLFWwindow*, int newWidth, int newHeight)
 	{
 		Settings::SetResolution(newWidth, newHeight);
 	}
 
-	void SetWin(GLFWwindow* newWin)
+	void SetWindow(GLFWwindow* newWindow)
 	{
-		win = newWin;
-		glfwSetWindowSizeCallback(win, window_size_callback);
+		window = newWindow;
+		glfwSetWindowSizeCallback(window, window_size_callback);
 	}
-	bool KeyDown(int key) { return glfwGetKey(win, key) == GLFW_PRESS; }
+	GLFWwindow* Window() {
+		return window;
+	}
+
+	bool KeyDown(int key) { return glfwGetKey(window, key) == GLFW_PRESS; }
 	glm::dvec2 CursorPos()
 	{
 		glm::dvec2 pos;
-		glfwGetCursorPos(win, &pos.x, &pos.y);
+		glfwGetCursorPos(window, &pos.x, &pos.y);
 		pos.x -= Settings::Width() / 2;
 		pos.y = -pos.y + Settings::Height() / 2;
 		return pos;
 	}
 	void SetCursorPos(glm::dvec2 pos)
 	{
-		glfwSetCursorPos(win, pos.x + Settings::Width() / 2, -pos.y + Settings::Height() / 2);
+		glfwSetCursorPos(window, pos.x + Settings::Width() / 2, -pos.y + Settings::Height() / 2);
 	}
 	void CenterCursor() { SetCursorPos({ 0, 0 }); }
 
