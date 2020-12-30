@@ -62,7 +62,7 @@ void run()
 	Cameraman player(camera);
 	InterfaceMap im(program);
 
-	LOG("Initialization complete");
+	LOG("Initialization complete\n");
 	Window::CenterCursor();
 	while (!glfwWindowShouldClose(window)) {
 		Window::NewFrame();
@@ -85,7 +85,7 @@ void run()
 		}
 		glfwSwapBuffers(window);
 	}
-	glfwTerminate();
+	LOG("\n");
 }
 
 void configureContex()

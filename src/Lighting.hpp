@@ -11,12 +11,12 @@ class Lighting
 {
 	struct Data
 	{
-		uint nLights;
+		alignas(uint) uint nLights;
 	};
 
 	GLBuffer SSBO;
-	Light* lights;
 	Data* data;
+	Light* lights;
 	uint slots = 100;
 	std::vector<uint> freedSlots;
 	uint nLights = 0;
@@ -27,7 +27,7 @@ class Lighting
 		SSBO.Storage(RealSize(slots), nullptr, GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
 		data = (Data*)SSBO.MapRange(0, RealSize(slots),
 					    GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
-		lights = (Light*)&data[1];
+		lights = (Light*)align(uintptr_t(data) + sizeof(Data), sizeof(vec4));
 	}
 	void Bind() { SSBO.BindBase(GL_SHADER_STORAGE_BUFFER, 0); }
 	uint addLight(Light light)
@@ -64,9 +64,8 @@ class Lighting
 		newSSBO.CopyData(SSBO, 0, 0, RealSize(slots));
 		data = (Data*)newSSBO.MapRange(0, RealSize(newSlots),
 							GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
-
+		lights = (Light*)align(uintptr_t(data) + sizeof(Data), sizeof(vec4));
 		slots = newSlots;
-		lights = (Light*)&data[1];
 		SSBO = std::move(newSSBO);
 	}
 };
