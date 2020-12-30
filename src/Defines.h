@@ -19,5 +19,9 @@ template <>
 constexpr unsigned int getAlignment<glm::vec3>() {
     return sizeof(glm::vec4);
 }
+template <>
+constexpr unsigned int getAlignment<bool>() {
+    return sizeof(uint32_t);
+}
 
 #define ALIGNED(T) alignas(getAlignment<T>()) T

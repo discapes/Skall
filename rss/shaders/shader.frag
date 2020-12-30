@@ -3,8 +3,8 @@
 layout(bindless_sampler) uniform;
 layout(bindless_image) uniform;
 
-#define AMBIENT 0.2
-#define DIFFUSE 0.5
+#define AMBIENT 0.1
+#define DIFFUSE 0.8
 #define SPECULAR 1.0
 #define CONSTANT 1.0
 
@@ -28,6 +28,8 @@ struct Light {
 };
 
 layout (std430, binding = 0) buffer Lights {
+    vec3 ambient;
+    bool flashlight;
     uint nLights;
     Light lights[];
 };
@@ -39,6 +41,7 @@ layout (std140, binding = 0) uniform Material  {
 } mat;
 
 uniform vec3 camPos;
+uniform vec3 camDir;
 
 vec4 calcColor(Light light) {
     vec4 color = vec4(0);
@@ -54,10 +57,10 @@ vec4 calcColor(Light light) {
         color = ambient + diffuse + specular;
 
         if (light.type >= 2) {
-            //float dist = length(light.pos - frag.pos);
-            //float attenuation = CONSTANT + light.linear * dist + light.quadratic * (dist * dist);
-           // float luminosity = 1.0 / attenuation;
-           // color *= luminosity;
+            float dist = length(light.pos - frag.pos);
+            float attenuation = CONSTANT + light.linear * dist + light.quadratic * (dist * dist);
+            float luminosity = 1.0 / attenuation;
+            color *= luminosity;
 
             if (light.type >= 3) {
                 float theta = dot(-lightDir, light.dir);
@@ -70,9 +73,22 @@ vec4 calcColor(Light light) {
     return color;
 }
 
+#define FLRANGE 1000
 void main()
 {
     color = vec4(0, 0, 0, 1);
     for (int i = 0; i < nLights; i++)
         color += calcColor(lights[i]);
+
+    if (flashlight) color += calcColor(Light(
+        3, 
+        vec3(1, 1, 1),
+        camDir,
+        camPos,
+        4.5 / FLRANGE,
+        75.0 / FLRANGE * FLRANGE,
+        cos(radians(60)),
+        cos(radians(63))
+    ));
+    color.cla
 } 

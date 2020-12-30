@@ -57,7 +57,9 @@ void run()
 
 	LOG("Initializing world");
 	Lighting lighting;
-	lighting.addLight(Light({ 1, 1, 1 }, { 1, 1, 1 }, 10));
+	lighting.addLight(Light({ 1, 1, 1 }, { 1, 1, -1 }, 10));
+	lighting.addLight(Light({1,1,1}, {1/3.f, 1/3.f, 1/3.f}));
+	lighting.SetFlashlight(true);
 	Camera camera;
 	Cameraman player(camera);
 	InterfaceMap im(program);
@@ -76,6 +78,7 @@ void run()
 			im.SetM(M);
 			im.SetMVP(MVP);
 			im.SetCamPos(camera.Pos());
+			im.SetCamDir(camera.Forward());
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		{ // DRAWING
@@ -100,7 +103,7 @@ void configureContex()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.1, 0.1, 0.1, 1);
 }
 
 GLFWwindow* createWindow()

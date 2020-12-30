@@ -11,7 +11,8 @@ class Lighting
 {
 	struct Data
 	{
-		alignas(uint) uint nLights;
+		ALIGNED(bool) flashlight;
+		ALIGNED(uint) nLights;
 	};
 
 	GLBuffer SSBO;
@@ -21,6 +22,7 @@ class Lighting
 	std::vector<uint> freedSlots;
 	uint nLights = 0;
 	bool off = false;
+	bool flashlight = true;
 
     public:
 	Lighting()
@@ -29,6 +31,7 @@ class Lighting
 		data = (Data*)SSBO.MapRange(0, RealSize(slots),
 					    GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
 		lights = (Light*)ROUNDTO(uintptr_t(data) + sizeof(Data), sizeof(vec4));
+		data->flashlight = flashlight;
 	}
 	void Bind() { SSBO.BindBase(GL_SHADER_STORAGE_BUFFER, 0); }
 	uint addLight(Light light)
@@ -54,8 +57,12 @@ class Lighting
 		--nLights;
 		if (!off) data->nLights = nLights;
 	}
-	void SwitchOff() { off = true; data->nLights = 0; }
-	void SwitchOn() { off = false; data->nLights = nLights; }
+	void SwitchOff() { off = true; data->nLights = 0; data->flashlight = false; }
+	void SwitchOn() { off = false; data->nLights = nLights; data->flashlight = flashlight; }
+	void SetFlashlight(bool on) {
+		flashlight = on;
+		data->flashlight = flashlight;
+	}
 
     private:
 	uint RealSize(uint slots) { return sizeof(Data) + slots * sizeof(Light); }

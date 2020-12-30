@@ -40,4 +40,5 @@ class Camera {
     mat4 ViewMatrix() { return viewMatrix; }
     mat4 ProjMatrix() { return projMatrix; }
 	vec3 Pos() { return pos; }
+	vec3 Forward() { return forward; }
 };

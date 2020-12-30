@@ -28,7 +28,7 @@ struct Light {
 		, color(color)
 		, pos(pos)
 		, linear(4.5 / range)
-		, quadratic(75.0 / range * range)
+		, quadratic(75.0 / (range * range))
 	{}
 	Light(vec3 color, vec3 dir, vec3 pos, float range, float innerCutoff, float outerCutoff)
 		: type(3)

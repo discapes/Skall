@@ -3,7 +3,7 @@
 
 struct InterfaceMap
 {
-	enum Resource { M, MVP, CAMPOS, MATERIAL, LIGHTS, N_RESOURCES };
+	enum Resource { M, MVP, CAMPOS, CAMDIR, MATERIAL, LIGHTS, N_RESOURCES };
 	std::array<GLint, N_RESOURCES> map;
 	GLProgram& program;
 	InterfaceMap(GLProgram& program)
@@ -12,6 +12,7 @@ struct InterfaceMap
 		map[M] = program.GetResourceLocation(GL_UNIFORM, "M");
 		map[MVP] = program.GetResourceLocation(GL_UNIFORM, "MVP");
 		map[CAMPOS] = program.GetResourceLocation(GL_UNIFORM, "camPos");
+		map[CAMDIR] = program.GetResourceLocation(GL_UNIFORM, "camDir");
 		map[MATERIAL] = program.GetResourceIndex(GL_UNIFORM_BLOCK, "Material");
 		map[LIGHTS] = program.GetResourceIndex(GL_SHADER_STORAGE_BLOCK, "Lights");
 	}
@@ -30,6 +31,11 @@ struct InterfaceMap
 	{
 		if (map[CAMPOS] != -1)
 			program.Uniform3f(map[CAMPOS], vec);
+	}
+	void SetCamDir(glm::vec3 vec)
+	{
+		if (map[CAMDIR] != -1)
+			program.Uniform3f(map[CAMDIR], vec);
 	}
 	void SetMVP(glm::mat4 mat)
 	{
