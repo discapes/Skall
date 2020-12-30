@@ -54,7 +54,7 @@ namespace Window
 			nFrames = 0;
 			lastFPSCount = time;
 #ifdef PRINTFPS
-			std::cout << fps << std::endl;
+			std::cout << "FPS : " << fps << std::endl;
 #endif
 		}
 

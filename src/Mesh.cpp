@@ -3,7 +3,7 @@
 
 Mesh::Mesh(std::string name, const std::vector<GLuint>& indices, const std::vector<Vertex>& vertices)
 {
-	LOG("Loading mesh %s", name.c_str());
+	LOG("Loading mesh '%s'", name.c_str());
 	this->name = std::move(name);
 	this->lengthIndices = indices.size() * sizeof(GLuint);
 	GLsizei lengthVertices = vertices.size() * sizeof(Vertex);

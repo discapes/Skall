@@ -73,5 +73,6 @@ void main()
     color = vec4(0, 0, 0, 1);
     for (int i = 0; i < nLights; i++)
         color += calcColor(lights[i]);
-    color = texture(mat.diffuse, frag.uv);
+    color = vec4(float(lights[1].type), 0, 0, 1);
+    //color = texture(mat.diffuse, frag.uv);
 } 

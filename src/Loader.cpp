@@ -34,16 +34,16 @@ GLProgram Loader::BuildProgram(string_view vertexShaderName, string_view fragmen
     ifstream fsStream(fsPath);
     bool vsFound = vsStream.good();
     bool fsFound = fsStream.good();
-    LOG("Vertex shader %s %s, fragment shader %s %s",
+    LOG("Vertex shader '%s' %s, fragment shader '%s' %s",
      vertexShaderName.data(), vsFound ? "found" : "not found",
      fragmentShaderName.data(), fsFound ? "found" : "not found");
     assert(vsFound && fsFound);
     getline(vsStream, vsSource, '\0');
     getline(fsStream, fsSource, '\0');
 
-    LOG("Compiling vertex shader %s", vertexShaderName.data());
+    LOG("Compiling vertex shader '%s'", vertexShaderName.data());
     GLShader vertexShader = compileShader(vsSource.c_str(), GL_VERTEX_SHADER);
-    LOG("Compiling fragment shader %s", fragmentShaderName.data());
+    LOG("Compiling fragment shader '%s'", fragmentShaderName.data());
     GLShader fragmentShader = compileShader(fsSource.c_str(), GL_FRAGMENT_SHADER);
     GLProgram program;
     program.AttachShader(vertexShader);
@@ -59,14 +59,14 @@ GLProgram Loader::BuildProgram(string_view vertexShaderName, string_view fragmen
     {
         char infoLog[512];
         program.GetInfoLog(512, NULL, infoLog);
-        FAIL("Failed to link program: %s", infoLog);
+        FAIL("Failed to link program:\n%s", infoLog);
     }
     return program;
 }
 
 GLTexture Loader::LoadTexture(string_view name)
 {
-    LOG("Loading texture %s", name.data());
+    LOG("Loading texture '%s'", name.data());
     int width, height, nChannels;
 
     stbi_set_flip_vertically_on_load(true);

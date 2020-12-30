@@ -21,45 +21,52 @@ using namespace std;
 using namespace glm;
 
 GLFWwindow* createWindow();
-void configureGL();
+void configureContex();
 
 // todo flashlight, world ambient
 
 void run()
 {
-	{
-		LOG("Initializing GLFW");
-		assert(glfwInit());
-		LOG("Creating window");
-		GLFWwindow* window = createWindow();
-		Window::SetWindow(window);
-		LOG("Loading OpenGL functions");
-		assert(gladLoadGL());
-		if (!GLAD_GL_ARB_bindless_texture)
-			FAIL("GPU unsupported (GL_ARB_bindless_texture)");
-	}
-	{
-		Mesh cube("Cube", Cube::indices, Cube::vertices);
-		Lighting lighting;
-		Camera camera;
-		GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
-		Cameraman player(camera);
-		InterfaceMap im(program);
+	LOG("Initializing GLFW");
+	assert(glfwInit());
 
-		GLTexture grass_diffuse = Loader::LoadTexture("grass_diffuse.png");
-		GLTexture grass_specular = Loader::LoadTexture("grass_specular.png");
-		GLuint64 grass_diffuse_handle = grass_diffuse.GetTextureHandleARB();
-		GLuint64 grass_specular_handle = grass_specular.GetTextureHandleARB();
-		glMakeTextureHandleResidentARB(grass_diffuse_handle);
-		glMakeTextureHandleResidentARB(grass_specular_handle);
-		Material grassBlock(32, grass_diffuse_handle, grass_specular_handle);
-	}
+	LOG("Creating window");
+	GLFWwindow* window = createWindow();
+	Window::SetWindow(window);
+
+	LOG("Loading OpenGL functions");
+	assert(gladLoadGL());
+	if (!GLAD_GL_ARB_bindless_texture)
+		FAIL("GPU unsupported (GL_ARB_bindless_texture)");
+
+	LOG("Configuring context")
+	configureContex();
+
+	LOG("Loading assets");
+	Mesh cube("Cube", Cube::indices, Cube::vertices);
+	GLTexture grass_diffuse = Loader::LoadTexture("grass_diffuse.png");
+	GLTexture grass_specular = Loader::LoadTexture("grass_specular.png");
+	GLProgram program = Loader::BuildProgram("shader.vert", "shader.frag");
+
+	LOG("Sending assets to GPU");
+	GLuint64 grass_diffuse_handle = grass_diffuse.GetTextureHandleARB();
+	GLuint64 grass_specular_handle = grass_specular.GetTextureHandleARB();
+	glMakeTextureHandleResidentARB(grass_diffuse_handle);
+	glMakeTextureHandleResidentARB(grass_specular_handle);
+	Material grassBlock(32, grass_diffuse_handle, grass_specular_handle);
+
+	LOG("Initializing world");
+	Lighting lighting;
+	lighting.addLight(Light({ 1, 1, 1 }, { 0, 0, 0 }, 10));
+	Camera camera;
+	Cameraman player(camera);
+	InterfaceMap im(program);
 
 	LOG("Initialization complete");
 	Window::CenterCursor();
 	while (!glfwWindowShouldClose(window)) {
 		Window::NewFrame();
-		{
+		{ // INPUT
 			glfwPollEvents();
 			if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 				glfwSetWindowShouldClose(window, true);
@@ -70,17 +77,18 @@ void run()
 			im.SetMVP(MVP);
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		lighting.Bind();
-		grassBlock.Bind();
-		program.Use();
-		cube.Draw();
-
+		{ // DRAWING
+			lighting.Bind();
+			grassBlock.Bind();
+			program.Use();
+			cube.Draw();
+		}
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
 }
 
-void configureGL()
+void configureContex()
 {
 	glfwSwapInterval(0);
 	glfwSetInputMode(Window::Window(), GLFW_STICKY_KEYS, GL_TRUE);
@@ -109,7 +117,6 @@ GLFWwindow* createWindow()
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		Settings::SetResolution(mode->width, mode->height);
 	}
-	LOG("Creating window")
 	GLFWwindow* window = glfwCreateWindow(Settings::Width(), Settings::Height(), "Skall",
 					      Settings::Fullscreen() ? glfwGetPrimaryMonitor() : NULL, NULL);
 	assert(window);
