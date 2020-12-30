@@ -57,7 +57,7 @@ void run()
 
 	LOG("Initializing world");
 	Lighting lighting;
-	lighting.addLight(Light({ 1, 1, 1 }, { 0, 0, 0 }, 10));
+	lighting.addLight(Light({ 1, 1, 1 }, { 1, 1, 1 }, 10));
 	Camera camera;
 	Cameraman player(camera);
 	InterfaceMap im(program);
@@ -71,10 +71,11 @@ void run()
 			if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 				glfwSetWindowShouldClose(window, true);
 			player.ProcessInput();
-			mat4 MV = camera.ViewMatrix() * glm::translate(mat4(1.f), { 0, 0, -2 });
-			mat4 MVP = camera.ProjMatrix() * MV;
-			im.SetMV(MV);
+			mat4 M = glm::translate(mat4(1.f), { 0, 0, -2 });
+			mat4 MVP = camera.ProjMatrix() * camera.ViewMatrix() * M;
+			im.SetM(M);
 			im.SetMVP(MVP);
+			im.SetCamPos(camera.Pos());
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		{ // DRAWING

@@ -39,4 +39,5 @@ class Camera {
     public:
     mat4 ViewMatrix() { return viewMatrix; }
     mat4 ProjMatrix() { return projMatrix; }
+	vec3 Pos() { return pos; }
 };

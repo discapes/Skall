@@ -2,17 +2,18 @@
 #include <glm/vec3.hpp>
 #include <variant>
 #include <array>
+#include "Defines.h"
 using namespace glm;
 
 struct Light {
-	alignas(int) int type; // 0 = off, 1 = directional, 2 = point, 3 = spot
-	alignas(vec4) vec3 color; // 123
-    alignas(vec4) vec3 dir; // 13
-    alignas(vec4) vec3 pos; // 23
-	alignas(float) float linear; // 23
-	alignas(float) float quadratic; //23
-	alignas(float) float innerCutoff; // 3
-	alignas(float) float outerCutoff; // 3
+	ALIGNED(int) type; // 0 = off, 1 = directional, 2 = point, 3 = spot
+	ALIGNED(vec3) color; // 123
+  	ALIGNED(vec3) dir; // 13
+    ALIGNED(vec3) pos; // 23
+	ALIGNED(float) linear; // 23
+	ALIGNED(float) quadratic; //23
+	ALIGNED(float) innerCutoff; // 3
+	ALIGNED(float) outerCutoff; // 3
 
 	Light()
 		: type(0)

@@ -1,5 +1,6 @@
 #pragma once
 #include <glad/glad.h>
+#include <glm/vec3.hpp>
 #include "Defines.h"
 
 class GLTexture
@@ -202,5 +203,8 @@ class GLProgram
 	void UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
 	{
 		return glProgramUniformMatrix4fv(program, location, count, transpose, value);
+	}
+	void Uniform3f(GLint location, glm::vec3 v) { 
+		return glProgramUniform3f(program, location, v.x, v.y, v.z);
 	}
 };

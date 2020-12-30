@@ -9,14 +9,13 @@ out VStoFS {
     vec2 uv;
 } fs;
 
-uniform mat4 MV;
+uniform mat4 M;
 uniform mat4 MVP;
 
 void main()
 {
     gl_Position = MVP * vec4(pos, 1);
-    
-    fs.pos = vec4(MV * vec4(pos, 1)).xyz;
-    fs.rawNormal = mat3(transpose(inverse(MV))) * normal; 
+    fs.pos = (M * vec4(pos, 1)).xyz;
+    fs.rawNormal = mat3(transpose(inverse(M))) * normal; 
     fs.uv = uv;
 }
