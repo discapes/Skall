@@ -4,7 +4,7 @@ layout(bindless_sampler) uniform;
 layout(bindless_image) uniform;
 
 #define AMBIENT 0.1
-#define DIFFUSE 0.8
+#define DIFFUSE 1.0
 #define SPECULAR 1.0
 #define CONSTANT 1.0
 
@@ -28,7 +28,7 @@ struct Light {
 };
 
 layout (std430, binding = 0) buffer Lights {
-    vec3 ambient;
+    vec4 ambient;
     bool flashlight;
     uint nLights;
     Light lights[];
@@ -90,5 +90,5 @@ void main()
         cos(radians(60)),
         cos(radians(63))
     ));
-    color.cla
+    color = max(color, ambient * texture(mat.diffuse, frag.uv));
 } 

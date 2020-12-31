@@ -56,12 +56,8 @@ void run()
 	Material grassBlock(32, grass_diffuse_handle, grass_specular_handle);
 
 	LOG("Initializing world");
-	Lighting lighting;
-	lighting.addLight(Light({ 1, 1, 1 }, { 1, 1, -1 }, 10));
-	lighting.addLight(Light({1,1,1}, {1/3.f, 1/3.f, 1/3.f}));
-	lighting.SetFlashlight(true);
-	Camera camera;
-	Cameraman player(camera);
+	//lighting.addLight(Light({ 1, 1, 1 }, { 1, 1, -1 }, 10));
+	//lighting.addLight(Light({ 1, 1, 1 }, { 1 / 3.f, 1 / 3.f, 1 / 3.f }));
 	InterfaceMap im(program);
 
 	LOG("Initialization complete\n");
@@ -82,9 +78,14 @@ void run()
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		{ // DRAWING
-			lighting.Bind();
 			grassBlock.Bind();
 			program.Use();
+
+			cube.Draw();
+			mat4 M = glm::scale(glm::translate(mat4(1), { 1, 1, -1 }), vec3(0.1));
+			mat4 MVP = camera.ProjMatrix() * camera.ViewMatrix() * M;
+			im.SetM(M);
+			im.SetMVP(MVP);
 			cube.Draw();
 		}
 		glfwSwapBuffers(window);
@@ -103,7 +104,7 @@ void configureContex()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-	glClearColor(0.1, 0.1, 0.1, 1);
+	glClearColor(0, 0, 0, 1);
 }
 
 GLFWwindow* createWindow()

@@ -11,6 +11,7 @@ class Lighting
 {
 	struct Data
 	{
+		ALIGNED(vec4) ambient;
 		ALIGNED(bool) flashlight;
 		ALIGNED(uint) nLights;
 	};
@@ -32,6 +33,7 @@ class Lighting
 					    GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
 		lights = (Light*)ROUNDTO(uintptr_t(data) + sizeof(Data), sizeof(vec4));
 		data->flashlight = flashlight;
+		data->ambient = vec4(0.1, 0.1, 0.1, 1);
 	}
 	void Bind() { SSBO.BindBase(GL_SHADER_STORAGE_BUFFER, 0); }
 	uint addLight(Light light)
@@ -62,6 +64,9 @@ class Lighting
 	void SetFlashlight(bool on) {
 		flashlight = on;
 		data->flashlight = flashlight;
+	}
+	void SetAmbient(vec4 col) {
+		data->ambient = col;
 	}
 
     private:

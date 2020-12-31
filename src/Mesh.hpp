@@ -4,8 +4,7 @@
 #include <vector>
 
 struct Mesh {
-	std::string name;
-	GLTexture texture;
+	std::vector<Material*> textures;
 	GLBuffer VBO;
 	GLuint lengthIndices;
 

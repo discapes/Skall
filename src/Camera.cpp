@@ -12,7 +12,7 @@ void Cameraman::ProcessMouse()
 	prevcursorpos = cursorpos;
 	camera.longtitude += lookSpeed * 0.005 * cpos.x;
 	camera.latitude += lookSpeed * 0.005 * cpos.y;
-	camera.latitude = clamp(camera.latitude, -1., 1.);
+	//camera.latitude = clamp(camera.latitude, -1., 1.);
 	if (camera.longtitude > 1.) camera.longtitude = -1.;
     else if (camera.longtitude < -1.) camera.longtitude = 1.;
 	
@@ -29,7 +29,7 @@ void Cameraman::ProcessMouse()
 		-cosLat * cosLong
 	);
 	
-	vec3 up = vec3( // dot: next step is to take advantage of the fact that sin(x + pi / 2) = cos(x) and cos(x + pi / 2) = -sin(x)
+	vec3 up = vec3( // taking advantage of the fact that sin(x + pi / 2) = cos(x) and cos(x + pi / 2) = -sin(x)
 		sinLong * -sinLat,
 		cosLat,
 		sinLat * cosLong
