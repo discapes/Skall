@@ -69,26 +69,8 @@ void run()
 			if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 				glfwSetWindowShouldClose(window, true);
 			player.ProcessInput();
-			mat4 M = glm::translate(mat4(1.f), { 0, 0, -2 });
-			mat4 MVP = camera.ProjMatrix() * camera.ViewMatrix() * M;
-			im.SetM(M);
-			im.SetMVP(MVP);
-			im.SetCamPos(camera.Pos());
-			im.SetCamDir(camera.Forward());
 		}
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		{ // DRAWING
-			grassBlock.Bind();
-			program.Use();
-
-			cube.Draw();
-			mat4 M = glm::scale(glm::translate(mat4(1), { 1, 1, -1 }), vec3(0.1));
-			mat4 MVP = camera.ProjMatrix() * camera.ViewMatrix() * M;
-			im.SetM(M);
-			im.SetMVP(MVP);
-			cube.Draw();
-		}
-		glfwSwapBuffers(window);
+		
 	}
 	LOG("\n");
 }

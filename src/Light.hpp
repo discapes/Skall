@@ -1,11 +1,8 @@
-#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <variant>
-#include <array>
-#include "Defines.h"
+#include "Defines.hpp"
 using namespace glm;
 
-struct Light {
+struct alignas(sizeof(vec4)) Light {
 	ALIGNED(int) type; // 0 = off, 1 = directional, 2 = point, 3 = spot
 	ALIGNED(vec3) color; // 123
   	ALIGNED(vec3) dir; // 13

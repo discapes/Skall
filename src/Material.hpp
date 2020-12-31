@@ -1,22 +1,8 @@
 #include <glad/glad.h>
-#include <assert.h>
-#include "Wrappers.hpp"
+#include "Defines.h"
 
-class Material
-{
-	GLBuffer UBO;
-    public:
-	Material(float shine, GLuint64 diffuse, GLuint64 specular)
-	{
-		size_t s = sizeof(shine) + sizeof(diffuse) + sizeof(specular);
-		uint8_t data[s];
-
-		*(float*)(data) = shine;
-		*(GLuint64*)(data + sizeof(GLuint64)) = diffuse;
-		*(GLuint64*)(data + sizeof(GLuint64) * 2) = specular;
-		UBO.Storage(s, data, 0);
-	}
-	void Bind() {
-        UBO.BindBase(GL_UNIFORM_BUFFER, 0);
-    }
+struct alignas(sizeof(GLuint64)) Material {
+    ALIGNED(float) shine;
+    ALIGNED(GLuint64) diffuse;
+    ALIGNED(GLuint64) specular;
 };

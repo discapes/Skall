@@ -28,17 +28,22 @@ struct Light {
 };
 
 layout (std430, binding = 0) buffer Lights {
-    vec4 ambient;
+    vec3 ambient;
     bool flashlight;
     uint nLights;
     Light lights[];
 };
 
-layout (std140, binding = 0) uniform Material  {
+struct Material  {
     float shine;
     sampler2D diffuse;
     sampler2D specular;
-} mat;
+};
+
+layout (std430, binding = 0) buffer Materials {
+    uint nMats;
+    Material mats[];
+};
 
 uniform vec3 camPos;
 uniform vec3 camDir;

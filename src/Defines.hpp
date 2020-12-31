@@ -9,7 +9,7 @@
 #define LOG(...) { /*printf("%s:%d: ", __FILE__, __LINE__);*/ printf(__VA_ARGS__); puts(""); }
 #define FAIL(...) { LOG(__VA_ARGS__); exit(1); }
 #define sleep(n) std::this_thread::sleep_for(std::chrono::milliseconds(n));
-#define ROUNDTO(offset, alignment) (((offset + alignment - 1) / alignment) * alignment)
+using uint = unsigned int;
 
 template <typename T>
 constexpr unsigned int getAlignment() {
@@ -24,4 +24,5 @@ constexpr unsigned int getAlignment<bool>() {
     return sizeof(uint32_t);
 }
 
+#define ROUNDTO(offset, alignment) (((offset + alignment - 1) / alignment) * alignment)
 #define ALIGNED(T) alignas(getAlignment<T>()) T
