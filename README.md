@@ -1,4 +1,4 @@
 # Skall
-![](https://lh3.googleusercontent.com/proxy/rNLjt-k7IV57qP6lYp_tfdvuX4ZeJwk8JsDkhJNhCodG_M5cNN8YrSqVBAaZTXr1kGtQ2Gndd5lJqnF2TRj8DXcJiDO81GKnXEHOO3RgbLlXsN8OA_YWlag8J2xjY8tFQ5Rbw6EEFWgXzBD1esNvGf9wADx0dQ)
+![screenshot](screenshot.png)
 
 Work in progress
